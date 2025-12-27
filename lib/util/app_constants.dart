@@ -4,7 +4,7 @@ import 'package:motoboy/util/images.dart';
 
 class AppConstants {
   static const String appName = 'to chegando delivery';
-  static const String baseUrl = 'https://https://painel.test';
+  static const String baseUrl = 'https://tochegandodelivery.site/';
   static const String polylineMapKey = 'AIzaSyDp58F_Sdf-CrcwUb8ZizIV7zCVEjIB1FI';
   static const double appVersion = 2.8;   /// Flutter SDK 3.38.0
   static const String configUri = '/api/driver/configuration';
