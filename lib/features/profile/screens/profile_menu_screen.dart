@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:motoboy/common_widgets/confirmation_bottomsheet_widget.dart';
@@ -30,145 +29,175 @@ class ProfileMenuScreen extends StatefulWidget {
 }
 
 class _ProfileMenuScreenState extends State<ProfileMenuScreen> {
+
   @override
   void initState() {
     Get.find<RideController>().updateRoute(true, notify: false);
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Theme.of(context).primaryColor,
-      body: Column(children: [
-        const ProfileLevelWidgetWidget(),
-        const SizedBox(height: 25),
-
-        Expanded(child: SingleChildScrollView(child: Column(children: [
-          ProfileMenuItem(icon: Images.profileIcon, title: 'profile',
-            onTap: ()=> Get.to(()=> const ProfileScreen()),
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).primaryColor,
+              Theme.of(context).primaryColor.withOpacity(0.85),
+            ],
           ),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            const ProfileLevelWidgetWidget(),
+            const SizedBox(height: 20),
 
-          ProfileMenuItem(icon: Images.message, title: 'message',
-            onTap: ()=>  Get.to(()=> const ChatScreen()),
-          ),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(30),
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Column(
+                    children: [
 
-          ProfileMenuItem(icon: Images.destinationIcon, title: 'my_reviews',
-            onTap: ()=> Get.to(()=> const ReviewScreen()),
-          ),
+                      _menuItem(Images.profileIcon, 'profile', ()=> Get.to(()=> const ProfileScreen())),
+                      _menuItem(Images.message, 'message', ()=> Get.to(()=> const ChatScreen())),
+                      _menuItem(Images.destinationIcon, 'my_reviews', ()=> Get.to(()=> const ReviewScreen())),
+                      _menuItem(Images.privacyPolicy, 'safety', ()=> Get.to(()=> const SafetySetupScreen())),
+                      _menuItem(Images.leaderBoardIcon, 'leader_board', ()=> Get.to(()=> const LeaderboardScreen())),
 
-          ProfileMenuItem(title: 'safety', icon: Images.privacyPolicy,
-            onTap: () => Get.to(() => const SafetySetupScreen()),
-          ),
+                      if((Get.find<SplashController>().config?.referralEarningStatus ?? false) ||
+                          ((Get.find<ProfileController>().profileInfo?.wallet?.referralEarn ?? 0) > 0))
+                        _menuItem(Images.referralIcon1, 'refer&earn', ()=> Get.to(()=> const ReferAndEarnScreen())),
 
-          ProfileMenuItem(icon: Images.leaderBoardIcon, title: 'leader_board',
-            onTap: ()=> Get.to(()=> const LeaderboardScreen()),
-          ),
+                      _menuItem(Images.leaderBoardIcon, 'add_withdraw_info', ()=> Get.to(()=> const PaymentInfoScreen())),
+                      _menuItem(Images.helpAndSupportIcon, 'help_and_support', ()=> Get.to(()=> const HelpAndSupportScreen())),
+                      _menuItem(Images.setting, 'setting', ()=> Get.to(()=> const SettingScreen())),
 
-          if((Get.find<SplashController>().config?.referralEarningStatus ?? false) ||
-              ((Get.find<ProfileController>().profileInfo?.wallet?.referralEarn ?? 0)> 0))
-          ProfileMenuItem(icon: Images.referralIcon1, title: 'refer&earn',
-            onTap: ()=> Get.to(()=> const ReferAndEarnScreen()),
-          ),
+                      _menuItem(Images.privacyPolicy, 'privacy_policy', (){
+                        Get.to(()=> PolicyViewerScreen(
+                          htmlType: HtmlType.privacyPolicy,
+                          image: Get.find<SplashController>().config?.privacyPolicy?.image ?? '',
+                        ));
+                      }),
 
-          ProfileMenuItem(icon: Images.leaderBoardIcon, title: 'add_withdraw_info',
-            onTap: ()=> Get.to(()=> const PaymentInfoScreen()),
-          ),
+                      _menuItem(Images.termsAndCondition, 'terms_and_condition', (){
+                        Get.to(()=> PolicyViewerScreen(
+                          htmlType: HtmlType.termsAndConditions,
+                          image: Get.find<SplashController>().config?.termsAndConditions?.image ?? '',
+                        ));
+                      }),
 
-          ProfileMenuItem(icon: Images.helpAndSupportIcon, title: 'help_and_support',
-            onTap: ()=> Get.to(()=> const HelpAndSupportScreen()),
-          ),
+                      _menuItem(Images.termsAndCondition, 'refund_policy', (){
+                        Get.to(()=> PolicyViewerScreen(
+                          htmlType: HtmlType.refundPolicy,
+                          image: Get.find<SplashController>().config?.refundPolicy?.image ?? '',
+                        ));
+                      }),
 
-          ProfileMenuItem(icon: Images.setting, title: 'setting',
-            onTap: ()=> Get.to(()=> const SettingScreen()),
-          ),
+                      _menuItem(Images.privacyPolicy, 'legal', (){
+                        Get.to(()=> PolicyViewerScreen(
+                          htmlType: HtmlType.legal,
+                          image: Get.find<SplashController>().config?.legal?.image ?? '',
+                        ));
+                      }),
 
-          ProfileMenuItem(icon: Images.privacyPolicy, title: 'privacy_policy',
-            onTap: ()=> Get.to(()=>  PolicyViewerScreen(htmlType: HtmlType.privacyPolicy,
-              image: Get.find<SplashController>().config?.privacyPolicy?.image??'',
-            )),
-          ),
+                      _menuItem(Images.logOutIcon, 'logout', (){
+                        Get.bottomSheet(GetBuilder<AuthController>(builder: (authController) {
+                          return ConfirmationBottomsheetWidget(
+                            icon: Images.exitIcon,
+                            iconColor: Theme.of(context).cardColor,
+                            isLoading: authController.logging,
+                            title: 'logout'.tr,
+                            description: 'do_you_want_to_log_out_this_account'.tr,
+                            onYesPressed: ()=> authController.logOut(),
+                            onNoPressed: ()=> Get.back(),
+                          );
+                        }));
+                      }),
 
-          ProfileMenuItem(icon: Images.termsAndCondition, title: 'terms_and_condition',
-            onTap: ()=> Get.to(()=>  PolicyViewerScreen(htmlType: HtmlType.termsAndConditions,
-              image: Get.find<SplashController>().config?.termsAndConditions?.image??'',
-            )),
-          ),
+                      _menuItem(Images.logOutIcon, 'permanently_delete_account'.tr, (){
+                        Get.bottomSheet(GetBuilder<AuthController>(builder: (authController) {
+                          return ConfirmationBottomsheetWidget(
+                            icon: Images.exitIcon,
+                            isLoading: authController.logging,
+                            iconColor: Theme.of(context).cardColor,
+                            isLogOut: true,
+                            title: 'delete_account'.tr,
+                            description: 'permanently_delete_confirm_msg'.tr,
+                            onNoPressed: ()=> Get.back(),
+                            onYesPressed: ()=> authController.permanentDelete(),
+                          );
+                        }));
+                      }),
 
-          ProfileMenuItem(icon: Images.termsAndCondition, title: 'refund_policy',
-            onTap: ()=> Get.to(()=>  PolicyViewerScreen(htmlType: HtmlType.refundPolicy,
-              image: Get.find<SplashController>().config?.refundPolicy?.image??'',
-            )),
-          ),
-
-          ProfileMenuItem(icon: Images.privacyPolicy, title: 'legal',
-            onTap: ()=> Get.to(()=>  PolicyViewerScreen(htmlType: HtmlType.legal,
-              image: Get.find<SplashController>().config?.legal?.image??'',
-            )),
-          ),
-
-
-          ProfileMenuItem(icon: Images.logOutIcon, title: 'logout', onTap: (){
-            Get.bottomSheet(GetBuilder<AuthController>(builder: (authController) {
-              return ConfirmationBottomsheetWidget(
-                icon: Images.exitIcon,
-                iconColor: Theme.of(context).cardColor,
-                isLoading: authController.logging,
-                title: 'logout'.tr,
-                description: 'do_you_want_to_log_out_this_account'.tr,
-                onYesPressed: ()=> authController.logOut(),
-                onNoPressed: ()=> Get.back(),
-              );
-            }));
-          }),
-
-          ProfileMenuItem(icon: Images.logOutIcon,
-            title: 'permanently_delete_account'.tr, onTap: (){
-            Get.bottomSheet(GetBuilder<AuthController>(builder: (authController) {
-              return ConfirmationBottomsheetWidget(
-                icon: Images.exitIcon,
-                isLoading: authController.logging,
-                iconColor: Theme.of(context).cardColor,
-                isLogOut: true,
-                title: 'delete_account'.tr,
-                description: 'permanently_delete_confirm_msg'.tr,
-                onNoPressed: ()=> Get.back(),
-                onYesPressed: ()=> authController.permanentDelete(),
-              );
-            }));
-
-            },
-          ),
-          const SizedBox(height: 100)
-        ]))),
-      ]),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
-}
 
-
-class ProfileMenuItem extends StatelessWidget {
-  final String icon;
-  final String title;
-  final Function()? onTap;
-  const ProfileMenuItem({super.key, required this.icon, required this.title, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(color: Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            Dimensions.paddingSizeDefault, Dimensions.paddingSizeDefault,
-            Dimensions.paddingSizeDefault, Dimensions.paddingSizeDefault,
+  Widget _menuItem(String icon, String title, Function() onTap) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          child: Row(children: [
-            SizedBox(width: Dimensions.iconSizeLarge,
-              child: Image.asset(icon, color: Get.isDarkMode ? Theme.of(context).textTheme.bodyMedium?.color : Theme.of(context).cardColor),
-            ),
-            const SizedBox(width: Dimensions.paddingSizeDefault),
-
-            Text(title.tr, style: textSemiBold.copyWith(color: Get.isDarkMode ? Theme.of(context).textTheme.bodyMedium?.color : Theme.of(context).cardColor, fontSize: Dimensions.fontSizeLarge)),
-          ]),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Image.asset(
+                  icon,
+                  width: 22,
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  title.tr,
+                  style: textSemiBold.copyWith(
+                    fontSize: Dimensions.fontSizeLarge,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+              const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey),
+            ],
+          ),
         ),
       ),
     );

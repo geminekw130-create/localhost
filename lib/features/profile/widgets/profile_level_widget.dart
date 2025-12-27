@@ -13,54 +13,101 @@ class ProfileLevelWidgetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProfileController>(builder: (profileController) {
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(
-          Dimensions.paddingSizeDefault, 100,
+      return Container(
+        margin: const EdgeInsets.fromLTRB(
+          Dimensions.paddingSizeDefault, 80,
           Dimensions.paddingSizeDefault, Dimensions.paddingSizeDefault,
         ),
-        child: Row(children:  [
-          SizedBox(child: ClipRRect(
-            borderRadius: BorderRadius.circular(Dimensions.paddingSizeExtraSmall),
-            child: ImageWidget(
-              width: 40,height: 40,
-              image: '${Get.find<SplashController>().config!.imageBaseUrl!.profileImage}/${profileController.profileInfo?.profileImage??""}',
+        padding: const EdgeInsets.all(Dimensions.paddingSizeDefault),
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
-          )),
-          const SizedBox(width: Dimensions.paddingSizeDefault),
+          ],
+        ),
+        child: Row(
+          children: [
 
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
-            Text(
-              '${profileController.profileInfo?.firstName}  ${profileController.profileInfo?.lastName}',
-              style: textBold.copyWith(color: Colors.white, fontSize: Dimensions.fontSizeLarge),
-              maxLines: 1,overflow: TextOverflow.ellipsis,
+            /// Avatar
+            ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: ImageWidget(
+                width: 60,
+                height: 60,
+                image:
+                    '${Get.find<SplashController>().config!.imageBaseUrl!.profileImage}/${profileController.profileInfo?.profileImage ?? ""}',
+              ),
             ),
-            const SizedBox(height: Dimensions.paddingSizeExtraSmall),
 
-            if(Get.find<SplashController>().config!.levelStatus!)
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(Dimensions.paddingSizeExtraSmall),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: Dimensions.paddingSizeExtraSmall),
-                  child: Text(
-                    (profileController.profileInfo != null && profileController.profileInfo!.level != null) ?
-                    '${profileController.profileInfo?.level?.name}':
-                    '',
-                    style: textRegular.copyWith(color: Theme.of(context).primaryColor),
+            const SizedBox(width: Dimensions.paddingSizeDefault),
+
+            /// Nome + Level
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  Text(
+                    '${profileController.profileInfo?.firstName ?? ''} ${profileController.profileInfo?.lastName ?? ''}',
+                    style: textBold.copyWith(
+                      color: Colors.white,
+                      fontSize: Dimensions.fontSizeLarge,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
+
+                  const SizedBox(height: 6),
+
+                  if (Get.find<SplashController>().config!.levelStatus!)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 4,
+                        horizontal: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        (profileController.profileInfo != null &&
+                                profileController.profileInfo!.level != null)
+                            ? '${profileController.profileInfo?.level?.name}'
+                            : '',
+                        style: textSemiBold.copyWith(
+                          color: Theme.of(context).primaryColor,
+                          fontSize: Dimensions.fontSizeSmall,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            /// Botão fechar
+            GestureDetector(
+              onTap: () =>
+                  Get.find<ProfileController>().toggleDrawer(),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  CupertinoIcons.clear,
+                  color: Colors.white,
+                  size: 20,
                 ),
               ),
-          ])),
-
-          GestureDetector(
-              onTap: ()=> Get.find<ProfileController>().toggleDrawer(),
-              child: const SizedBox(child: Icon(CupertinoIcons.clear, color: Colors.white)),
-          )
-
-
-        ]),
+            ),
+          ],
+        ),
       );
     });
   }

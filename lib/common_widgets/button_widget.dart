@@ -17,51 +17,96 @@ class ButtonWidget extends StatelessWidget {
   final Color? borderColor;
   final Color? textColor;
   final Color? backgroundColor;
+
   const ButtonWidget({
-    super.key, this.onPressed, required this.buttonText, this.transparent = false, this.margin = EdgeInsets.zero,
-    this.width = Dimensions.webMaxWidth, this.height = 45, this.fontSize, this.radius = 5, this.icon,this.showBorder = false,this.borderWidth=1,
-    this.borderColor, this.textColor, this.backgroundColor,
+    super.key,
+    this.onPressed,
+    required this.buttonText,
+    this.transparent = false,
+    this.margin = EdgeInsets.zero,
+    this.width = Dimensions.webMaxWidth,
+    this.height = 50,
+    this.fontSize,
+    this.radius = 14,
+    this.icon,
+    this.showBorder = false,
+    this.borderWidth = 1,
+    this.borderColor,
+    this.textColor,
+    this.backgroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle flatButtonStyle = TextButton.styleFrom(
-      backgroundColor:
-      backgroundColor ?? (onPressed == null ? Theme.of(context).disabledColor : transparent ? Colors.transparent : Theme.of(context).primaryColor),
-      minimumSize: Size(width, height),
-      padding: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius),
-          side: showBorder?BorderSide(color: borderColor ?? Theme.of(context).primaryColor,width: borderWidth):const BorderSide(color: Colors.transparent)
-      ),
 
-    );
+    final Color bgColor = backgroundColor ??
+        (onPressed == null
+            ? Theme.of(context).disabledColor
+            : transparent
+                ? Colors.transparent
+                : Theme.of(context).primaryColor);
 
-    return Center(child: SizedBox(width: width, child: Padding(
-      padding: margin,
-      child: TextButton(
-        onPressed: onPressed,
-        style: flatButtonStyle,
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          icon != null ?
-          Padding(
-            padding: const EdgeInsets.only(right: Dimensions.paddingSizeExtraSmall),
-            child: Icon(icon, color: transparent ? Theme.of(context).primaryColor : Colors.white),
-          ) :
-          const SizedBox(),
-
-          Flexible(
-            child: Text(
-              buttonText, textAlign: TextAlign.center,
-              style: textBold.copyWith(
-                color: textColor ?? (transparent ? Theme.of(context).primaryColor : Colors.white),
-                fontSize: fontSize ?? Dimensions.fontSizeLarge,
-                overflow: TextOverflow.ellipsis,
+    return Center(
+      child: SizedBox(
+        width: width,
+        child: Padding(
+          padding: margin,
+          child: TextButton(
+            onPressed: onPressed,
+            style: TextButton.styleFrom(
+              backgroundColor: bgColor,
+              minimumSize: Size(width, height),
+              padding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(radius),
+                side: showBorder
+                    ? BorderSide(
+                        color: borderColor ?? Theme.of(context).primaryColor,
+                        width: borderWidth,
+                      )
+                    : BorderSide.none,
               ),
+              shadowColor: transparent ? Colors.transparent : Colors.black,
+              elevation: transparent ? 0 : 2,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                if (icon != null)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        right: Dimensions.paddingSizeExtraSmall),
+                    child: Icon(
+                      icon,
+                      size: 20,
+                      color: transparent
+                          ? Theme.of(context).primaryColor
+                          : Colors.white,
+                    ),
+                  ),
+
+                Flexible(
+                  child: Text(
+                    buttonText,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: textBold.copyWith(
+                      color: textColor ??
+                          (transparent
+                              ? Theme.of(context).primaryColor
+                              : Colors.white),
+                      fontSize:
+                          fontSize ?? Dimensions.fontSizeLarge,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ]),
+        ),
       ),
-    )));
+    );
   }
 }
